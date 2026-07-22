@@ -1,0 +1,54 @@
+# .gitignore — Search, Processing and Use of Information (PUBLIC repo)
+#
+# NOTE: Office formats (.xlsx/.pptx/.pdf/.docx) are NOT ignored here — they are
+# the teaching content. This file blocks only junk, secrets, and — critically —
+# any assessment or student-identifying material that must never become public.
+
+# --- NEVER publish: assessment & student-identifying material ---
+# These belong only in the private course repo. Listed so an accidental copy
+# into this tree is refused rather than committed.
+02-Assessments/
+**/Submissions/
+**/Peer Review/
+**/Reports/
+**/Video Presentations/
+*Grades*.xlsx
+*grade*.xlsx
+*roster*
+*peer_review*
+# Labeled solution files (worked teaching examples are fine; graded solutions are not)
+*Solution*.xlsx
+*Solutions*.xlsx
+*Solutions*.docx
+* - Solution*.xlsx
+*SOLVED*
+
+# --- Secrets / credentials ---
+*.env
+.env*
+*.key
+*.pem
+*.pfx
+*secret*
+*credential*
+*token*
+
+# --- OS / OneDrive / Office temp & lock files ---
+~$*
+*.tmp
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Editor / IDE ---
+.vscode/
+.idea/
+*.swp
+*~
+
+# --- Build artifacts ---
+__pycache__/
+*.pyc
+*.log
+.venv/
+node_modules/

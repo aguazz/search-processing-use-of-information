@@ -1,0 +1,376 @@
+<title>Prompt Doctor — ICC / AIM</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --bg: #f4f2ee;
+    --surface: #ffffff;
+    --surface-2: #faf9f6;
+    --ink: #1b1e2b;
+    --ink-soft: #5c6072;
+    --ink-faint: #8b8f9e;
+    --line: rgba(27,30,43,0.12);
+    --line-strong: rgba(27,30,43,0.22);
+    --orange: #ff5700;
+    --orange-soft: #fff0e8;
+    --navy: #1a1f6c;
+    --ok: #1a7f5a;
+    --ok-soft: #e6f4ee;
+    --warn: #9a6410;
+    --warn-soft: #fbf1de;
+    --focus: #2f6fe0;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #131620;
+      --surface: #1b1f2b;
+      --surface-2: #20242f;
+      --ink: #ecebe6;
+      --ink-soft: #a7abbb;
+      --ink-faint: #767b8c;
+      --line: rgba(236,235,230,0.13);
+      --line-strong: rgba(236,235,230,0.26);
+      --orange: #ff7a3d;
+      --orange-soft: #35251b;
+      --navy: #99a0ee;
+      --ok: #5ec99f;
+      --ok-soft: #17302a;
+      --warn: #e0b45a;
+      --warn-soft: #322910;
+      --focus: #6ea0f0;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #131620;
+    --surface: #1b1f2b;
+    --surface-2: #20242f;
+    --ink: #ecebe6;
+    --ink-soft: #a7abbb;
+    --ink-faint: #767b8c;
+    --line: rgba(236,235,230,0.13);
+    --line-strong: rgba(236,235,230,0.26);
+    --orange: #ff7a3d;
+    --orange-soft: #35251b;
+    --navy: #99a0ee;
+    --ok: #5ec99f;
+    --ok-soft: #17302a;
+    --warn: #e0b45a;
+    --warn-soft: #322910;
+    --focus: #6ea0f0;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    font-size: 16px;
+  }
+  main { max-width: 760px; margin: 0 auto; padding: 40px 20px 72px; }
+
+  header.top { margin-bottom: 28px; }
+  .eyebrow {
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.09em;
+    text-transform: uppercase; color: var(--orange); margin: 0 0 6px;
+  }
+  h1 { font-size: 1.85rem; font-weight: 800; letter-spacing: -0.02em; margin: 0 0 8px; }
+  .sub { color: var(--ink-soft); margin: 0; max-width: 58ch; }
+
+  .step { margin-top: 30px; }
+  .step-label {
+    display: flex; align-items: center; gap: 9px; margin: 0 0 12px;
+    font-size: 0.78rem; font-weight: 700; letter-spacing: 0.05em;
+    text-transform: uppercase; color: var(--ink-soft);
+  }
+  .step-num {
+    width: 22px; height: 22px; border-radius: 50%; flex: none;
+    background: var(--navy); color: #fff; font-size: 0.78rem; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  textarea, input {
+    font-family: inherit; font-size: 1rem; color: var(--ink);
+    background: var(--surface); border: 1px solid var(--line-strong);
+    border-radius: 10px; padding: 12px 14px; width: 100%; resize: vertical;
+  }
+  textarea { min-height: 96px; line-height: 1.45; }
+  textarea:focus, input:focus { outline: 2px solid var(--focus); outline-offset: 1px; border-color: transparent; }
+
+  .btn {
+    font: inherit; font-weight: 700; cursor: pointer; border: none;
+    border-radius: 10px; padding: 11px 20px; background: var(--orange);
+    color: #fff; margin-top: 12px; transition: filter .12s ease;
+  }
+  .btn:hover { filter: brightness(1.06); }
+  .btn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+  .btn.secondary { background: transparent; color: var(--orange); border: 1px solid var(--orange); padding: 8px 14px; margin: 0; }
+
+  .hidden { display: none !important; }
+
+  /* Diagnosis */
+  .verdict {
+    display: flex; align-items: flex-start; gap: 12px;
+    background: var(--orange-soft); border: 1px solid var(--line);
+    border-left: 4px solid var(--orange); border-radius: 10px;
+    padding: 14px 16px; margin-bottom: 16px;
+  }
+  .verdict .badge {
+    font-size: 0.72rem; font-weight: 800; letter-spacing: 0.04em;
+    background: var(--orange); color: #fff; border-radius: 6px;
+    padding: 3px 9px; flex: none; margin-top: 1px;
+  }
+  .verdict p { margin: 0; font-size: 0.94rem; }
+  .verdict strong { color: var(--navy); }
+
+  .checks { display: grid; gap: 8px; }
+  .check {
+    display: grid; grid-template-columns: 26px 1fr; gap: 10px;
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: 10px; padding: 11px 13px;
+  }
+  .check .mark {
+    width: 20px; height: 20px; border-radius: 50%; flex: none; margin-top: 2px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.72rem; font-weight: 800;
+  }
+  .check.present .mark { background: var(--ok-soft); color: var(--ok); }
+  .check.missing .mark { background: var(--warn-soft); color: var(--warn); }
+  .check .dim-name { font-weight: 700; font-size: 0.92rem; }
+  .check .dim-q { color: var(--ink-soft); font-size: 0.88rem; margin-top: 2px; }
+
+  /* Rebuild */
+  .tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+  .tab {
+    font: inherit; font-weight: 700; cursor: pointer; flex: 1;
+    background: var(--surface); border: 1px solid var(--line-strong);
+    color: var(--ink-soft); border-radius: 10px; padding: 12px;
+    text-align: left; transition: all .12s ease;
+  }
+  .tab .tab-t { display: block; font-size: 1.02rem; color: var(--ink); }
+  .tab .tab-d { display: block; font-size: 0.8rem; font-weight: 500; margin-top: 2px; }
+  .tab[aria-selected="true"] { border-color: var(--orange); background: var(--orange-soft); }
+  .tab[aria-selected="true"] .tab-t { color: var(--orange); }
+  .tab:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+  .field { margin-bottom: 14px; }
+  .field label { display: block; font-weight: 700; margin-bottom: 4px; }
+  .field .q { color: var(--ink-soft); font-size: 0.86rem; margin-bottom: 7px; }
+  .field .letter { color: var(--orange); }
+
+  .result {
+    background: var(--surface-2); border: 1px solid var(--line);
+    border-radius: 12px; padding: 16px; margin-top: 8px;
+  }
+  .result-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .result-head h3 { margin: 0; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-soft); }
+  pre.assembled {
+    margin: 0; white-space: pre-wrap; word-wrap: break-word;
+    font-family: ui-monospace, "SF Mono", Consolas, monospace;
+    font-size: 0.9rem; line-height: 1.55; color: var(--ink);
+  }
+  pre.assembled .k { color: var(--orange); font-weight: 700; }
+  .copied { color: var(--ok); font-size: 0.82rem; font-weight: 700; }
+
+  .foot { margin-top: 40px; padding-top: 18px; border-top: 1px solid var(--line);
+    color: var(--ink-faint); font-size: 0.82rem; }
+</style>
+
+<main>
+  <header class="top">
+    <p class="eyebrow">Search, Processing &amp; Use of Information · AI &amp; Prompt Engineering</p>
+    <h1>Prompt Doctor</h1>
+    <p class="sub">Paste a prompt you'd actually send. This tool checks what a strong
+      prompt usually includes, tells you whether <strong>ICC</strong> or <strong>AIM</strong> fits,
+      and helps you rebuild it — one field at a time.</p>
+  </header>
+
+  <section class="step">
+    <div class="step-label"><span class="step-num">1</span> Paste your prompt</div>
+    <textarea id="raw" placeholder="e.g. Summarize this / Write me an email about the group project / Improve my CV"></textarea>
+    <button class="btn" id="diagnose">Diagnose it →</button>
+  </section>
+
+  <section class="step hidden" id="diag-step" aria-live="polite">
+    <div class="step-label"><span class="step-num">2</span> Diagnosis</div>
+    <div class="verdict">
+      <span class="badge" id="rec-badge">ICC</span>
+      <p id="rec-text"></p>
+    </div>
+    <div class="checks" id="checks"></div>
+  </section>
+
+  <section class="step hidden" id="build-step">
+    <div class="step-label"><span class="step-num">3</span> Rebuild it</div>
+    <div class="tabs" role="tablist">
+      <button class="tab" id="tab-icc" role="tab" aria-selected="true" aria-controls="panel-icc">
+        <span class="tab-t">ICC</span>
+        <span class="tab-d">Creating from scratch — no source material</span>
+      </button>
+      <button class="tab" id="tab-aim" role="tab" aria-selected="false" aria-controls="panel-aim">
+        <span class="tab-t">AIM</span>
+        <span class="tab-d">Working on material you already have</span>
+      </button>
+    </div>
+
+    <div id="panel-icc" role="tabpanel">
+      <div class="field">
+        <label><span class="letter">I</span>nstructions</label>
+        <div class="q">The exact task — one clear action (summarize, draft, compare…).</div>
+        <textarea data-icc="i"></textarea>
+      </div>
+      <div class="field">
+        <label><span class="letter">C</span>ontext</label>
+        <div class="q">Your role, your objective, and <em>who the output is for</em>.</div>
+        <textarea data-icc="c1"></textarea>
+      </div>
+      <div class="field">
+        <label><span class="letter">C</span>onstraints</label>
+        <div class="q">The rules: length, tone, format — plus an example to imitate, if you have one.</div>
+        <textarea data-icc="c2"></textarea>
+      </div>
+    </div>
+
+    <div id="panel-aim" role="tabpanel" class="hidden">
+      <div class="field">
+        <label><span class="letter">A</span>ctor</label>
+        <div class="q">Who should Claude be? Assign it an expert role.</div>
+        <textarea data-aim="a"></textarea>
+      </div>
+      <div class="field">
+        <label><span class="letter">I</span>nput</label>
+        <div class="q">The material to work from — name it or note that you've attached it.</div>
+        <textarea data-aim="i"></textarea>
+      </div>
+      <div class="field">
+        <label><span class="letter">M</span>ission</label>
+        <div class="q">The ultra-specific, measurable goal — not "make it better".</div>
+        <textarea data-aim="m"></textarea>
+      </div>
+    </div>
+
+    <div class="result">
+      <div class="result-head">
+        <h3>Your rebuilt prompt</h3>
+        <button class="btn secondary" id="copy">Copy</button>
+      </div>
+      <pre class="assembled" id="assembled"></pre>
+    </div>
+  </section>
+
+  <p class="foot">A coaching tool — the checks are quick heuristics, not a grade. The
+    thinking is yours; this just makes sure you've asked the questions a good prompt answers.
+    In Part 5 you'll meet the same logic packaged as a reusable <em>Skill</em>.</p>
+</main>
+
+<script>
+(function () {
+  var raw = document.getElementById('raw');
+  var rawText = '';
+
+  var DIMS = [
+    { key: 'task', name: 'A clear task', q: 'What exactly do you want done? One action verb.',
+      test: function (t) { return /\b(summar|write|draft|list|compare|explain|analy[sz]|review|create|generate|translat|rewrit|outline|plan|critiqu|improv|describe|find|suggest|design)/i.test(t) && t.trim().split(/\s+/).length >= 3; } },
+    { key: 'role', name: 'A role', q: 'Who should Claude be, or who are you? (“act as…”, “I’m a…”)',
+      test: function (t) { return /\b(you are|you're|act as|as an? |imagine you|i am |i'm |we are |we're )/i.test(t); } },
+    { key: 'ctx', name: 'Context & audience', q: 'What’s the situation, and who is the output for?',
+      test: function (t) { return /\b(for |my |our |because|so that|context|audience|reader|professor|client|classmate|exam)/i.test(t); } },
+    { key: 'mat', name: 'Material to work from', q: 'Is there a document/data to work on? (signals AIM)',
+      test: function (t) { return /\b(this|these|the (document|file|text|report|deck|slides?|article|paper|notes|data|table)|attached|below|following|pasted|uploaded)\b/i.test(t) || t.length > 300; } },
+    { key: 'con', name: 'Constraints & format', q: 'Length, tone, structure? (“4 bullets”, “formal”, “a table”)',
+      test: function (t) { return /\b(bullets?|table|\d+\s*(words?|characters?|lines?|points?|sentences?|paragraphs?)|short|brief|concise|tone|formal|casual|format|numbered|list|steps|one page|headings?)\b/i.test(t); } },
+    { key: 'ex', name: 'An example', q: 'A sample to imitate makes the shape unmistakable.',
+      test: function (t) { return /\b(example|e\.?g\.?|like this|such as|for instance|similar to)\b/i.test(t); } }
+  ];
+
+  function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+  document.getElementById('diagnose').addEventListener('click', function () {
+    rawText = raw.value.trim();
+    if (!rawText) { raw.focus(); return; }
+
+    var results = DIMS.map(function (d) { return { d: d, present: d.test(rawText) }; });
+    var hasMaterial = results.find(function (r) { return r.d.key === 'mat'; }).present;
+
+    // Recommendation
+    var badge = document.getElementById('rec-badge');
+    var recText = document.getElementById('rec-text');
+    if (hasMaterial) {
+      badge.textContent = 'AIM';
+      recText.innerHTML = 'You seem to have <strong>material to work on</strong>, so <strong>AIM</strong> fits best — you’re directing an expert over something that already exists. (You can still try ICC below.)';
+      selectTab('aim');
+    } else {
+      badge.textContent = 'ICC';
+      recText.innerHTML = 'Looks like you’re <strong>creating from scratch</strong>, so <strong>ICC</strong> fits best — you supply everything yourself. (Switch to AIM below if you do have a document to work from.)';
+      selectTab('icc');
+    }
+
+    // Checklist
+    var box = document.getElementById('checks');
+    box.innerHTML = '';
+    results.forEach(function (r) {
+      var el = document.createElement('div');
+      el.className = 'check ' + (r.present ? 'present' : 'missing');
+      el.innerHTML =
+        '<span class="mark">' + (r.present ? '✓' : '?') + '</span>' +
+        '<div><div class="dim-name">' + r.d.name + (r.present ? '' : ' — worth adding') + '</div>' +
+        '<div class="dim-q">' + r.d.q + '</div></div>';
+      box.appendChild(el);
+    });
+
+    // Prefill rebuild fields from the raw prompt
+    document.querySelector('[data-icc="i"]').value = rawText;
+    document.querySelector('[data-aim="m"]').value = rawText;
+    ['c1', 'c2'].forEach(function (k) { document.querySelector('[data-icc="' + k + '"]').value = ''; });
+    ['a', 'i'].forEach(function (k) { document.querySelector('[data-aim="' + k + '"]').value = ''; });
+
+    document.getElementById('diag-step').classList.remove('hidden');
+    document.getElementById('build-step').classList.remove('hidden');
+    assemble();
+    document.getElementById('diag-step').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+
+  var currentTab = 'icc';
+  function selectTab(which) {
+    currentTab = which;
+    document.getElementById('tab-icc').setAttribute('aria-selected', which === 'icc');
+    document.getElementById('tab-aim').setAttribute('aria-selected', which === 'aim');
+    document.getElementById('panel-icc').classList.toggle('hidden', which !== 'icc');
+    document.getElementById('panel-aim').classList.toggle('hidden', which !== 'aim');
+    assemble();
+  }
+  document.getElementById('tab-icc').addEventListener('click', function () { selectTab('icc'); });
+  document.getElementById('tab-aim').addEventListener('click', function () { selectTab('aim'); });
+
+  function line(label, val) {
+    if (!val.trim()) return '';
+    return '<span class="k">' + label + ':</span> ' + esc(val.trim()) + '\n\n';
+  }
+  function assemble() {
+    var out = '';
+    if (currentTab === 'icc') {
+      out += line('Instructions', document.querySelector('[data-icc="i"]').value);
+      out += line('Context', document.querySelector('[data-icc="c1"]').value);
+      out += line('Constraints', document.querySelector('[data-icc="c2"]').value);
+    } else {
+      out += line('Actor', document.querySelector('[data-aim="a"]').value);
+      out += line('Input', document.querySelector('[data-aim="i"]').value);
+      out += line('Mission', document.querySelector('[data-aim="m"]').value);
+    }
+    document.getElementById('assembled').innerHTML = out.trim() || '<span style="color:var(--ink-faint)">Fill the fields above and your rebuilt prompt appears here.</span>';
+  }
+  document.querySelectorAll('#build-step textarea').forEach(function (t) {
+    t.addEventListener('input', assemble);
+  });
+
+  document.getElementById('copy').addEventListener('click', function () {
+    var text = document.getElementById('assembled').innerText;
+    var btn = this;
+    navigator.clipboard.writeText(text).then(function () {
+      var old = btn.textContent; btn.textContent = 'Copied ✓'; btn.classList.add('copied');
+      setTimeout(function () { btn.textContent = old; btn.classList.remove('copied'); }, 1600);
+    });
+  });
+})();
+</script>

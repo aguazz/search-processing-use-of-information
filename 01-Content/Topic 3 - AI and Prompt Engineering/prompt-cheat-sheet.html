@@ -1,0 +1,189 @@
+<title>Prompt &amp; Technique Cheat Sheet</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --bg: #f4f2ee;
+    --card: #ffffff;
+    --ink: #1b1e2b;
+    --soft: #565b6e;
+    --faint: #8a8e9d;
+    --line: rgba(27,30,43,0.12);
+    --orange: #ff5700;
+    --orange-soft: #fff1e8;
+    --navy: #1a1f6c;
+    --mono-bg: #f2efe9;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #14161f; --card: #1c1f2b; --ink: #ecebe6; --soft: #a8acbb;
+      --faint: #767b8c; --line: rgba(236,235,230,0.14); --orange: #ff7a3d;
+      --orange-soft: #35251b; --navy: #99a0ee; --mono-bg: #23262f;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #14161f; --card: #1c1f2b; --ink: #ecebe6; --soft: #a8acbb;
+    --faint: #767b8c; --line: rgba(236,235,230,0.14); --orange: #ff7a3d;
+    --orange-soft: #35251b; --navy: #99a0ee; --mono-bg: #23262f;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: Arial, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, sans-serif;
+    line-height: 1.42; font-size: 15px;
+  }
+  main { max-width: 1000px; margin: 0 auto; padding: 32px 22px 56px; }
+
+  header.top { margin-bottom: 20px; }
+  .eyebrow { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.09em;
+    text-transform: uppercase; color: var(--orange); margin: 0 0 5px; }
+  h1 { font-size: 1.7rem; font-weight: 800; letter-spacing: -0.01em; margin: 0 0 6px; }
+  .lede { color: var(--soft); margin: 0; max-width: 70ch; font-size: 0.95rem; }
+
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 18px; }
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 11px;
+    padding: 15px 17px; break-inside: avoid;
+  }
+  .card.span { grid-column: 1 / -1; }
+  .card h2 {
+    font-size: 0.7rem; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase;
+    color: var(--orange); margin: 0 0 10px; display: flex; align-items: baseline; gap: 8px;
+  }
+  .card h2 .sub { color: var(--faint); font-weight: 600; letter-spacing: 0; text-transform: none; font-size: 0.72rem; }
+
+  .rule { display: grid; grid-template-columns: auto 1fr; gap: 8px 12px; align-items: start; }
+  .rule dt { font-weight: 800; color: var(--navy); white-space: nowrap; }
+  .rule dt .let { color: var(--orange); }
+  .rule dd { margin: 0; color: var(--ink); }
+  .rule dd small { color: var(--soft); }
+
+  .decision { display: flex; gap: 12px; flex-wrap: wrap; }
+  .decision .opt { flex: 1 1 220px; background: var(--orange-soft); border-radius: 9px; padding: 11px 13px; }
+  .decision .opt b { color: var(--navy); }
+  .decision .opt .k { color: var(--orange); font-weight: 800; }
+
+  ul.tight { margin: 0; padding-left: 18px; }
+  ul.tight li { margin-bottom: 6px; }
+  ul.tight li b { color: var(--navy); }
+
+  .checks { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px 14px; margin: 0; padding: 0; list-style: none; }
+  .checks li { position: relative; padding-left: 18px; color: var(--ink); font-size: 0.9rem; }
+  .checks li::before { content: "☐"; position: absolute; left: 0; color: var(--orange); font-weight: 700; }
+
+  code, .mono {
+    font-family: ui-monospace, "SF Mono", Consolas, monospace; font-size: 0.82rem;
+    background: var(--mono-bg); border-radius: 5px; padding: 1px 5px;
+  }
+  .ex { background: var(--mono-bg); border-radius: 8px; padding: 9px 11px; margin-top: 9px;
+    font-family: ui-monospace, "SF Mono", Consolas, monospace; font-size: 0.79rem;
+    line-height: 1.5; color: var(--ink); white-space: pre-wrap; }
+  .ex .k { color: var(--orange); font-weight: 700; }
+
+  .tagline { grid-column: 1 / -1; text-align: center; color: var(--navy); font-weight: 700;
+    font-size: 1.02rem; padding: 6px 0 0; }
+  .foot { margin-top: 18px; color: var(--faint); font-size: 0.78rem; text-align: center; }
+
+  @media (max-width: 720px) {
+    .grid { grid-template-columns: 1fr; }
+    .checks { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media print {
+    :root { --bg: #fff; --card: #fff; --line: #ccc; --mono-bg: #f0f0f0; }
+    body { font-size: 12px; } main { padding: 0; max-width: none; }
+    .card { border: 1px solid #ccc; }
+    .foot { display: none; }
+  }
+</style>
+
+<main>
+  <header class="top">
+    <p class="eyebrow">Search, Processing &amp; Use of Information · AI &amp; Prompt Engineering</p>
+    <h1>Prompt &amp; Technique Cheat Sheet</h1>
+    <p class="lede">The one page to keep. Two frameworks for asking well, the checklist behind
+      them, the techniques that sharpen any prompt, and how to ask for an Artifact — for this
+      course and the Group Project after it.</p>
+  </header>
+
+  <div class="grid">
+
+    <div class="card span">
+      <h2>Start here — ICC or AIM?</h2>
+      <div class="decision">
+        <div class="opt"><span class="k">ICC</span> — <b>creating from scratch.</b>
+          No source material yet: an email, a summary, an idea. You supply everything.</div>
+        <div class="opt"><span class="k">AIM</span> — <b>working on material you have.</b>
+          A document, dataset, or draft to analyze, review, or improve. You direct an expert over it.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>ICC <span class="sub">drafting from scratch</span></h2>
+      <dl class="rule">
+        <dt><span class="let">I</span>nstructions</dt><dd>The exact task — one clear action.</dd>
+        <dt><span class="let">C</span>ontext</dt><dd>Your role, your objective, <b>and who the output is for</b>.</dd>
+        <dt><span class="let">C</span>onstraints</dt><dd>Style, tone, length, format <small>— plus an example to imitate, if you have one.</small></dd>
+      </dl>
+      <div class="ex"><span class="k">Instructions:</span> draft a short email asking for a deadline extension.
+<span class="k">Context:</span> first-year student, missed 3 days ill, note available.
+<span class="k">Constraints:</span> under 100 words, formal, no excuses beyond the illness.</div>
+    </div>
+
+    <div class="card">
+      <h2>AIM <span class="sub">directing an expert</span></h2>
+      <dl class="rule">
+        <dt><span class="let">A</span>ctor</dt><dd>Who Claude should be — an expert role.</dd>
+        <dt><span class="let">I</span>nput</dt><dd>The material to work from (attach or name it).</dd>
+        <dt><span class="let">M</span>ission</dt><dd>The ultra-specific, measurable goal <small>— not "make it better".</small></dd>
+      </dl>
+      <div class="ex"><span class="k">Actor:</span> a recruiter who has screened thousands of CVs.
+<span class="k">Input:</span> my attached CV.
+<span class="k">Mission:</span> the 5 weakest things for a data-analyst internship, each with a one-line fix.</div>
+    </div>
+
+    <div class="card span">
+      <h2>The checklist <span class="sub">what a strong prompt almost always has</span></h2>
+      <ul class="checks">
+        <li>A clear <b>task</b> (one action verb)</li>
+        <li>A <b>role</b> (who Claude is / who you are)</li>
+        <li><b>Context &amp; audience</b> (who it's for)</li>
+        <li><b>Material</b> to work from → signals AIM</li>
+        <li><b>Constraints &amp; format</b> (length, tone, shape)</li>
+        <li>An <b>example</b> to imitate, if one exists</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>Techniques <span class="sub">layer onto ICC / AIM</span></h2>
+      <ul class="tight">
+        <li><b>Let AI interview you:</b> add <code>"Ask me whatever questions you need to do a better job."</code></li>
+        <li><b>Reverse prompting:</b> can't describe it? Hand over an example and let AI write the prompt.</li>
+        <li><b>Few-shot:</b> show 2–3 examples instead of describing — it copies the pattern.</li>
+        <li><b>Step-by-step:</b> ask it to reason in stages before answering — catches rushed errors.</li>
+        <li><b>Output shape:</b> name the exact form — a table, 4 bullets, a template — not just "content".</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>Asking for an Artifact <span class="sub">interactive output</span></h2>
+      <ul class="tight">
+        <li>Ask <b>explicitly</b> for an interactive Artifact — "make it a self-scoring quiz", not just "give me questions".</li>
+        <li>Ask <b>from inside your Project</b> so it draws on your real sources.</li>
+        <li>Name the <b>type</b>: quiz, flashcard deck, diagram, checklist.</li>
+        <li>It's <b>yours to keep</b> — download it or leave it in the Project.</li>
+      </ul>
+    </div>
+
+    <div class="card span">
+      <h2>Two things that beat any trick</h2>
+      <dl class="rule">
+        <dt>Ground it</dt><dd>Give Claude the real source before you ask — an answer it can trace to your document beats one it invents. Bad data in, bad result out, no matter the model.</dd>
+        <dt>You decide</dt><dd>AI does the work; you keep the judgment. Verify anything that counts — numbers, names, citations — and be upfront about how you used it.</dd>
+      </dl>
+    </div>
+
+    <p class="tagline">Stop speaking AI's language. Make AI work to understand you.</p>
+  </div>
+
+  <p class="foot">AI &amp; Prompt Engineering (Topic 3) · keep this for the Group Project · print to PDF from your browser</p>
+</main>
