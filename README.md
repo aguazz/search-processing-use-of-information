@@ -42,9 +42,3 @@ is a self-contained mini-course on using Claude, with tools you keep past the mo
 No exams, exam solutions, question banks, grading rubrics, student submissions,
 grades, or rosters — those stay in a separate private repository. Nothing in
 this repo is graded or student-identifying.
-
-## License & attribution
-
-Teaching materials by Abel Guada Azze for CUNEF Universidad. Shared for reuse —
-attribution appreciated. CUNEF's institutional brand assets are not included and
-remain the property of CUNEF Universidad.
